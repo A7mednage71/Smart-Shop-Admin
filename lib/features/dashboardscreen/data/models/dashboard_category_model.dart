@@ -26,7 +26,7 @@ class DashboardCategoryModel {
             image: Appassets.shoppingCart,
             title: "Inspect All Products",
             onpress: () {
-              Navigator.of(context).pushNamed(SearchScreen.routeName);
+              Navigator.of(context).pushNamed(SearchScreen.routname);
             }),
         DashboardCategoryModel(
           image: Appassets.order,

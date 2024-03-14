@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shopsmart_admin_ar/core/services/app_assets.dart';
-import 'package:shopsmart_admin_ar/core/widgets/empty_data_widget.dart';
-import 'package:shopsmart_admin_ar/core/widgets/title_text.dart';
+import 'package:shopsmart_admin_ar/core/widgets/app_name_shimmer.dart';
+import 'package:shopsmart_admin_ar/core/widgets/custom_empty_data.dart';
 import 'widgets/orders_widget.dart';
 
 class OrdersScreenFree extends StatefulWidget {
@@ -19,9 +19,7 @@ class _OrdersScreenFreeState extends State<OrdersScreenFree> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const TitlesTextWidget(
-            label: 'Placed orders',
-          ),
+          title: const AppNameWidget(name: "OrdersScreen"),
         ),
         body: isEmptyOrders
             ? CustomEmptyDataWidget(

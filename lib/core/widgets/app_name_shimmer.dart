@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-
-import 'title_text.dart';
-
 class AppNameWidget extends StatelessWidget {
   const AppNameWidget({super.key, this.size = 20, required this.name});
   final double size;

@@ -2,7 +2,6 @@ import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shopsmart_admin_ar/core/consts/app_constants.dart';
 import 'package:shopsmart_admin_ar/core/widgets/subtitle_text.dart';
-import 'package:shopsmart_admin_ar/core/widgets/title_text.dart';
 
 class OrdersWidgetFree extends StatefulWidget {
   const OrdersWidgetFree({super.key});
@@ -38,10 +37,9 @@ class _OrdersWidgetFreeState extends State<OrdersWidgetFree> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Flexible(
-                        child: TitlesTextWidget(
-                          label: 'productTitle',
-                          maxLines: 2,
-                          fontSize: 15,
+                        child: Text(
+                          "productTitle",
+                          style: TextStyle(fontSize: 18),
                         ),
                       ),
                       IconButton(
@@ -55,10 +53,7 @@ class _OrdersWidgetFreeState extends State<OrdersWidgetFree> {
                   ),
                   const Row(
                     children: [
-                      TitlesTextWidget(
-                        label: 'Price:  ',
-                        fontSize: 15,
-                      ),
+                      Text("Price", style: TextStyle(fontSize: 18)),
                       Flexible(
                         child: SubtitleTextWidget(
                           label: "11.99 \$",
@@ -73,24 +68,8 @@ class _OrdersWidgetFreeState extends State<OrdersWidgetFree> {
                   ),
                   const SubtitleTextWidget(
                     label: "Qty: 10",
-                    fontSize: 15,
+                    fontSize: 18,
                   ),
-                  // const Row(
-                  //   children: [
-                  //     Flexible(
-                  //       child: TitlesTextWidget(
-                  //         label: 'Qty:  ',
-                  //         fontSize: 15,
-                  //       ),
-                  //     ),
-                  //     Flexible(
-                  //       child: SubtitleTextWidget(
-                  //         label: "10",
-                  //         fontSize: 15,
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
                   const SizedBox(
                     height: 5,
                   ),

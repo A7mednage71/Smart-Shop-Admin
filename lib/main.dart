@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
           home: const DashboardScreen(),
           routes: {
             OrdersScreenFree.routeName: (context) => const OrdersScreenFree(),
-            SearchScreen.routeName: (context) => const SearchScreen(),
+            SearchScreen.routname: (context) => const SearchScreen(),
           },
         );
       }),

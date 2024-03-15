@@ -17,15 +17,15 @@ class Themedata {
       iconTheme: IconThemeData(
           color: isDark ? AppColor.lightCardColor : AppColor.darkCardColor),
       inputDecorationTheme: InputDecorationTheme(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         filled: true,
         contentPadding: const EdgeInsets.all(10),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(width: 2, color: Colors.transparent),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(8),
           borderSide:
               BorderSide(width: 2, color: isDark ? Colors.white : Colors.black),
         ),

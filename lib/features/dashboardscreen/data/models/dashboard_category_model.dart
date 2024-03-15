@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shopsmart_admin_ar/core/services/app_assets.dart';
+import 'package:shopsmart_admin_ar/features/add_product_screen/add_product_screen.dart';
 import 'package:shopsmart_admin_ar/features/ordersscreen/orders_screen.dart';
 import 'package:shopsmart_admin_ar/features/searchscreen/search_screen.dart';
 
@@ -19,7 +20,7 @@ class DashboardCategoryModel {
           image: Appassets.cloud,
           title: "Add New Product",
           onpress: () {
-            // Navigator.of(context).pushNamed();
+            Navigator.of(context).pushNamed(AddProductScreen.routname);
           },
         ),
         DashboardCategoryModel(

@@ -1,20 +1,25 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shopsmart_admin_ar/core/consts/app_constants.dart';
 import 'package:shopsmart_admin_ar/core/methods/show_warning_dialog.dart';
+import 'package:shopsmart_admin_ar/core/models/product_model.dart';
 import 'package:shopsmart_admin_ar/core/widgets/app_name_shimmer.dart';
-import 'package:shopsmart_admin_ar/features/add_product_screen/widgets/image_picker.dart';
+import 'package:shopsmart_admin_ar/features/add_product_screen/widgets/custom_material_button.dart';
+import 'package:shopsmart_admin_ar/features/add_product_screen/widgets/image_picker_alert_dialog.dart';
 import 'package:shopsmart_admin_ar/features/add_product_screen/widgets/text_form.dart';
 
-class AddProductScreen extends StatefulWidget {
-  const AddProductScreen({super.key});
+class AddOrUpdateProductScreen extends StatefulWidget {
+  const AddOrUpdateProductScreen({super.key, this.productModel});
   static const routname = 'AddProductScreen ';
-
+  final ProductModel? productModel;
   @override
-  State<AddProductScreen> createState() => _AddProductScreenState();
+  State<AddOrUpdateProductScreen> createState() =>
+      _AddOrUpdateProductScreenState();
 }
 
-class _AddProductScreenState extends State<AddProductScreen> {
+class _AddOrUpdateProductScreenState extends State<AddOrUpdateProductScreen> {
   late TextEditingController _textEditingController;
   late TextEditingController _priceEditingController;
   late TextEditingController _quantityEditingController;
@@ -22,14 +27,27 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   final AutovalidateMode _autovalidateMode = AutovalidateMode.always;
   GlobalKey<FormState> key = GlobalKey();
+  var imagePicker = ImagePicker();
+  XFile? pickedImage;
 
   String? category;
+  String? productmodelimage;
+  bool isEditing = false;
+
   @override
   void initState() {
-    _textEditingController = TextEditingController();
-    _priceEditingController = TextEditingController();
-    _quantityEditingController = TextEditingController();
-    _descriptionEditingController = TextEditingController();
+    if (widget.productModel != null) {
+      isEditing = true;
+      productmodelimage = widget.productModel!.productImage;
+    }
+    _textEditingController =
+        TextEditingController(text: widget.productModel?.productTitle);
+    _priceEditingController =
+        TextEditingController(text: widget.productModel?.productPrice);
+    _quantityEditingController =
+        TextEditingController(text: widget.productModel?.productQuantity);
+    _descriptionEditingController =
+        TextEditingController(text: widget.productModel?.productDescription);
     super.initState();
   }
 
@@ -62,12 +80,96 @@ class _AddProductScreenState extends State<AddProductScreen> {
               autovalidateMode: _autovalidateMode,
               child: Column(
                 children: [
-                  const CustomImagePicker(),
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Container(
+                        height: 110,
+                        width: 110,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          shape: BoxShape.rectangle,
+                          border: Border.all(width: 1.2, color: Colors.black),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: isEditing
+                              ? (productmodelimage != null
+                                  ? Image.network(
+                                      productmodelimage!,
+                                      fit: BoxFit.fill,
+                                    )
+                                  : (pickedImage != null
+                                      ? Image.file(
+                                          File(pickedImage!.path),
+                                          fit: BoxFit.fill,
+                                        )
+                                      : const Center(
+                                          child: Text(
+                                          "Product image",
+                                        ))))
+                              : (pickedImage == null
+                                  ? const Center(
+                                      child: Text("Product image"),
+                                    )
+                                  : Image.file(
+                                      File(pickedImage!.path),
+                                      fit: BoxFit.fill,
+                                    )),
+                        ),
+                      ),
+                      Positioned(
+                        right: -10,
+                        top: -8,
+                        child: CustomMaterialButton(
+                          icon: const Icon(Icons.add_a_photo_outlined),
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  content: ImagePickeraAlertDialog(
+                                    onCamera: () async {
+                                      var image = await imagePicker.pickImage(
+                                          source: ImageSource.camera);
+
+                                      setState(() {
+                                        pickedImage = image;
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                    onGallery: () async {
+                                      var image = await imagePicker.pickImage(
+                                          source: ImageSource.gallery);
+
+                                      setState(() {
+                                        pickedImage = image;
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                    onRemove: () {
+                                      setState(() {
+                                        pickedImage = null;
+                                        productmodelimage = null;
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      )
+                    ],
+                  ),
                   const SizedBox(
                     height: 20,
                   ),
                   DropdownButton<String>(
-                    hint: const Text("Select Category"),
+                    hint: Text(isEditing
+                        ? widget.productModel!.productCategory
+                        : "Select Category"),
                     value: category,
                     items: AppConstants.dropdowlist(),
                     onChanged: (String? value) {
@@ -136,6 +238,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     massege: 'Description is missed',
                     textCaptilize: TextCapitalization.sentences,
                   ),
+                  const SizedBox(
+                    height: 100,
+                  )
                 ],
               ),
             ),
@@ -167,15 +272,17 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () async {
-                      if (category == null) {
-                        return showWarningDialog(context);
+                      if (isEditing) {
+                        editingProduct();
+                      } else {
+                        uPloadingProduct();
                       }
                     },
                     icon: const Icon(
                       Icons.upload,
                     ),
-                    label: const Text(
-                      "Upload product",
+                    label: Text(
+                      isEditing ? "Edit Product" : "Upload product",
                     ),
                   ),
                 ),
@@ -185,5 +292,25 @@ class _AddProductScreenState extends State<AddProductScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> uPloadingProduct() async {
+    if (category == null) {
+      showWarningDialog(context, text: 'Category is Empty');
+      return;
+    }
+    if (pickedImage == null) {
+      showWarningDialog(context, text: 'Please pick up an image');
+      return;
+    }
+    if (key.currentState!.validate()) {}
+  }
+
+  Future<void> editingProduct() async {
+    if (pickedImage == null || productmodelimage == null) {
+      showWarningDialog(context, text: 'Please pick up an image');
+      return;
+    }
+    if (key.currentState!.validate()) {}
   }
 }

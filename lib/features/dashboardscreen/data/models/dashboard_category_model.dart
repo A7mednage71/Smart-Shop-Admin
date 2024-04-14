@@ -20,7 +20,7 @@ class DashboardCategoryModel {
           image: Appassets.cloud,
           title: "Add New Product",
           onpress: () {
-            Navigator.of(context).pushNamed(AddProductScreen.routname);
+            Navigator.of(context).pushNamed(AddOrUpdateProductScreen.routname);
           },
         ),
         DashboardCategoryModel(

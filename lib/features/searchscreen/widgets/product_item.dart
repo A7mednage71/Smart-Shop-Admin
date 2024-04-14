@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopsmart_admin_ar/core/manager/product_provider.dart';
 import 'package:shopsmart_admin_ar/core/models/product_model.dart';
+import 'package:shopsmart_admin_ar/features/add_product_screen/add_product_screen.dart';
 
 class ProductItem extends StatelessWidget {
   const ProductItem({
@@ -17,7 +18,13 @@ class ProductItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
-        onTap: () {},
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return AddOrUpdateProductScreen(
+              productModel: model,
+            );
+          }));
+        },
         child: Column(
           children: [
             ClipRRect(

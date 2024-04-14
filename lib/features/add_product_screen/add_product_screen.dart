@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shopsmart_admin_ar/core/consts/app_constants.dart';
 import 'package:shopsmart_admin_ar/core/methods/show_warning_dialog.dart';
-import 'package:shopsmart_admin_ar/core/utils/validators/my_validator.dart';
 import 'package:shopsmart_admin_ar/core/widgets/app_name_shimmer.dart';
+import 'package:shopsmart_admin_ar/features/add_product_screen/widgets/image_picker.dart';
 import 'package:shopsmart_admin_ar/features/add_product_screen/widgets/text_form.dart';
-import 'package:shopsmart_admin_ar/features/add_product_screen/widgets/warning_alert_dialog.dart';
 
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key});
@@ -63,6 +62,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
               autovalidateMode: _autovalidateMode,
               child: Column(
                 children: [
+                  const CustomImagePicker(),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   DropdownButton<String>(
                     hint: const Text("Select Category"),
                     value: category,
@@ -72,6 +75,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         category = value;
                       });
                     },
+                  ),
+                  const SizedBox(
+                    height: 20,
                   ),
                   DefaultCustomFormField(
                     textfieldcontroller: _textEditingController,

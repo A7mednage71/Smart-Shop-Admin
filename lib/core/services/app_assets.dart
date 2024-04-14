@@ -10,7 +10,7 @@ class Appassets {
   static String shoppingCart = "$imagesPath/shopping_cart.png";
 
   // Categories path
-  static String mobiles = "$categoriesImagesPath/mobiles.png";
+  // static String mobiles = "assets/images/categories/mobiles.png";
   static String fashion = "$categoriesImagesPath/fashion.png";
   static String watch = "$categoriesImagesPath/watch.png";
   static String book = "$categoriesImagesPath/book_img.png";

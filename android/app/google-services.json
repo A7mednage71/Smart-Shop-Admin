@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "523979426975",
+    "project_id": "storeshop-b3b95",
+    "storage_bucket": "storeshop-b3b95.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:523979426975:android:79cab754a45b2d286ae6aa",
+        "android_client_info": {
+          "package_name": "com.example.shopsmartadmin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1l1Ve0lEO8RrjRszmINbKOWJf86yZqJY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:523979426975:android:426466c21e2199026ae6aa",
+        "android_client_info": {
+          "package_name": "com.example.smartshop"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1l1Ve0lEO8RrjRszmINbKOWJf86yZqJY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -5,10 +5,15 @@ import 'package:shopsmart_admin_ar/core/utils/themedata/ThemData.dart';
 import 'package:shopsmart_admin_ar/core/utils/themedata/manager/themeData_provider.dart';
 import 'package:shopsmart_admin_ar/features/add_product_screen/add_product_screen.dart';
 import 'package:shopsmart_admin_ar/features/dashboardscreen/presentation/views/dashboard_screen.dart';
+import 'package:shopsmart_admin_ar/firebase_options.dart';
 import 'features/ordersscreen/orders_screen.dart';
 import 'features/searchscreen/search_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 

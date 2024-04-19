@@ -295,12 +295,12 @@ class _AddOrUpdateProductScreenState extends State<AddOrUpdateProductScreen> {
   }
 
   Future<void> uPloadingProduct() async {
-    if (category == null) {
-      showWarningDialog(context, text: 'Category is Empty');
+    if (pickedImage == null) {
+      showWarningDialog(context, text: 'Please pick up product image');
       return;
     }
-    if (pickedImage == null) {
-      showWarningDialog(context, text: 'Please pick up an image');
+    if (category == null) {
+      showWarningDialog(context, text: 'Category is Empty');
       return;
     }
     if (key.currentState!.validate()) {}

@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -6,9 +8,11 @@ import 'package:shopsmart_admin_ar/core/consts/app_constants.dart';
 import 'package:shopsmart_admin_ar/core/methods/show_warning_dialog.dart';
 import 'package:shopsmart_admin_ar/core/models/product_model.dart';
 import 'package:shopsmart_admin_ar/core/widgets/app_name_shimmer.dart';
+import 'package:shopsmart_admin_ar/core/widgets/showTopSnackbar.dart';
 import 'package:shopsmart_admin_ar/features/add_product_screen/widgets/custom_material_button.dart';
 import 'package:shopsmart_admin_ar/features/add_product_screen/widgets/image_picker_alert_dialog.dart';
 import 'package:shopsmart_admin_ar/features/add_product_screen/widgets/text_form.dart';
+import 'package:uuid/uuid.dart';
 
 class AddOrUpdateProductScreen extends StatefulWidget {
   const AddOrUpdateProductScreen({super.key, this.productModel});
@@ -32,7 +36,10 @@ class _AddOrUpdateProductScreenState extends State<AddOrUpdateProductScreen> {
 
   String? category;
   String? productmodelimage;
+  String? productImageUrl;
   bool isEditing = false;
+
+  bool isloading = false;
 
   @override
   void initState() {
@@ -49,6 +56,17 @@ class _AddOrUpdateProductScreenState extends State<AddOrUpdateProductScreen> {
     _descriptionEditingController =
         TextEditingController(text: widget.productModel?.productDescription);
     super.initState();
+  }
+
+  void clearForm() {
+    _textEditingController.clear();
+    _priceEditingController.clear();
+    _quantityEditingController.clear();
+    _descriptionEditingController.clear();
+    setState(() {
+      pickedImage = null;
+      productmodelimage = null;
+    });
   }
 
   @override
@@ -256,7 +274,9 @@ class _AddOrUpdateProductScreenState extends State<AddOrUpdateProductScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    clearForm();
+                  },
                   icon: const Icon(
                     Icons.clear,
                     color: Colors.white,
@@ -281,11 +301,16 @@ class _AddOrUpdateProductScreenState extends State<AddOrUpdateProductScreen> {
                     icon: const Icon(
                       Icons.upload,
                     ),
-                    label: Text(
-                      isEditing ? "Edit Product" : "Upload product",
-                    ),
+                    label: isloading
+                        ? const SizedBox(
+                            height: 30,
+                            width: 30,
+                            child: CircularProgressIndicator())
+                        : Text(
+                            isEditing ? "Edit Product" : "Upload product",
+                          ),
                   ),
-                ),
+                )
               ],
             ),
           ),
@@ -296,14 +321,66 @@ class _AddOrUpdateProductScreenState extends State<AddOrUpdateProductScreen> {
 
   Future<void> uPloadingProduct() async {
     if (pickedImage == null) {
-      showWarningDialog(context, text: 'Please pick up product image');
+      showWarningDialog(context, text: 'make sure to pick up an image');
       return;
     }
     if (category == null) {
       showWarningDialog(context, text: 'Category is Empty');
       return;
     }
-    if (key.currentState!.validate()) {}
+
+    if (key.currentState!.validate()) {
+      key.currentState!.save();
+      isloading = true;
+      setState(() {});
+      try {
+        String productId = const Uuid().v4();
+        await storeUserImage(productId: productId);
+        await storeUserData(productId: productId);
+        showTopSnakbar(
+            context: context,
+            success: true,
+            message: "Product has been added Successfully");
+        // Navigator.pushNamed(context, RootPage.routname);
+      } on FirebaseException catch (e) {
+        debugPrint('$e');
+        showTopSnakbar(
+          context: context,
+          success: false,
+          message: "there was an error with Firebase",
+        );
+      } catch (e) {
+        showTopSnakbar(
+          context: context,
+          success: false,
+          message: "there was an error",
+        );
+      }
+      isloading = false;
+      setState(() {});
+    } else {}
+  }
+
+  Future<void> storeUserImage({required String productId}) async {
+    final refernce = FirebaseStorage.instance
+        .ref()
+        .child("productsImages")
+        .child("$productId.jpg");
+    await refernce.putFile(File(pickedImage!.path));
+    productImageUrl = await refernce.getDownloadURL();
+  }
+
+  Future<void> storeUserData({required String productId}) async {
+    FirebaseFirestore.instance.collection("products").doc(productId).set({
+      "productId": productId,
+      "productTitle": _textEditingController.text.trim(),
+      "productPrice": _priceEditingController.text.trim(),
+      "productCategory": category,
+      "productDescription": _descriptionEditingController.text.trim(),
+      "productImage": productImageUrl,
+      "productQuantity": _quantityEditingController.text.trim(),
+      "timestamp": Timestamp.now(),
+    });
   }
 
   Future<void> editingProduct() async {

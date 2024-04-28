@@ -52,9 +52,18 @@ class _SearchScreenState extends State<SearchScreen> {
           title: AppNameWidget(name: CategoryName ?? "Search Products"),
           centerTitle: true,
         ),
-        body: products.isEmpty
-            ? const NoProductsWidget()
-            : Padding(
+        body: StreamBuilder<List<ProductModel>>(
+            stream:
+                Provider.of<ProductProvider>(context).getProductsFromFirebase(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return const Center(child: Text("there was an error..!"));
+              } else if (snapshot.data == null) {
+                return const NoProductsWidget();
+              }
+              return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
@@ -115,7 +124,8 @@ class _SearchScreenState extends State<SearchScreen> {
                     )
                   ],
                 ),
-              ),
+              );
+            }),
       ),
     );
   }

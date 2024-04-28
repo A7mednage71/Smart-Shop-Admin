@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -113,9 +114,9 @@ class _AddOrUpdateProductScreenState extends State<AddOrUpdateProductScreen> {
                           borderRadius: BorderRadius.circular(20),
                           child: isEditing
                               ? (productmodelimage != null
-                                  ? Image.network(
-                                      productmodelimage!,
-                                      fit: BoxFit.fill,
+                                  ? FancyShimmerImage(
+                                      imageUrl: productmodelimage!,
+                                      boxFit: BoxFit.fill,
                                     )
                                   : (pickedImage != null
                                       ? Image.file(
@@ -336,7 +337,7 @@ class _AddOrUpdateProductScreenState extends State<AddOrUpdateProductScreen> {
       try {
         String productId = const Uuid().v4();
         await storeUserImage(productId: productId);
-        await storeUserData(productId: productId);
+        await storeProductData(productId: productId);
         showTopSnakbar(
             context: context,
             success: true,
@@ -370,7 +371,7 @@ class _AddOrUpdateProductScreenState extends State<AddOrUpdateProductScreen> {
     productImageUrl = await refernce.getDownloadURL();
   }
 
-  Future<void> storeUserData({required String productId}) async {
+  Future<void> storeProductData({required String productId}) async {
     FirebaseFirestore.instance.collection("products").doc(productId).set({
       "productId": productId,
       "productTitle": _textEditingController.text.trim(),
@@ -383,11 +384,54 @@ class _AddOrUpdateProductScreenState extends State<AddOrUpdateProductScreen> {
     });
   }
 
+  Future<void> updateProductData({required String productId}) async {
+    FirebaseFirestore.instance.collection("products").doc(productId).update({
+      "productId": productId,
+      "productTitle": _textEditingController.text.trim(),
+      "productPrice": _priceEditingController.text.trim(),
+      "productCategory": category ?? widget.productModel!.productCategory,
+      "productDescription": _descriptionEditingController.text.trim(),
+      "productImage": productImageUrl ?? productmodelimage,
+      "productQuantity": _quantityEditingController.text.trim(),
+      "timestamp": Timestamp.now(),
+    });
+  }
+
   Future<void> editingProduct() async {
-    if (pickedImage == null || productmodelimage == null) {
+    if (pickedImage == null && productmodelimage == null) {
       showWarningDialog(context, text: 'Please pick up an image');
       return;
     }
-    if (key.currentState!.validate()) {}
+    if (key.currentState!.validate()) {
+      key.currentState!.save();
+      isloading = true;
+      setState(() {});
+      try {
+        String productId = widget.productModel!.productId;
+        if (pickedImage != null) {
+          await storeUserImage(productId: productId);
+        }
+        await updateProductData(productId: productId);
+        showTopSnakbar(
+            context: context,
+            success: true,
+            message: "Product has been Updated Successfully");
+      } on FirebaseException catch (e) {
+        debugPrint('$e');
+        showTopSnakbar(
+          context: context,
+          success: false,
+          message: "there was an error with Firebase",
+        );
+      } catch (e) {
+        showTopSnakbar(
+          context: context,
+          success: false,
+          message: "there was an error",
+        );
+      }
+      isloading = false;
+      setState(() {});
+    } else {}
   }
 }

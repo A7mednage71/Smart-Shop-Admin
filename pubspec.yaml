@@ -32,6 +32,8 @@ dependencies:
   firebase_storage: ^11.7.1
 
 dev_dependencies:
+  flutter_native_splash: ^2.3.2
+  flutter_launcher_icons: ^0.13.1
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
@@ -44,3 +46,21 @@ flutter:
     - assets/images/
     - assets/images/categories/
     - assets/images/dashboard/
+    
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/lightSplash.png  
+  color_dark: "#28222C"
+  image_dark: assets/darkSplash.png
+
+  android_12:
+    image: assets/lightSplash.png
+    icon_background_color: "#ffffff"
+    image_dark: assets/darkSplash.png
+    icon_background_color_dark: "#28222C"
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/shopping_cart.png"
+  min_sdk_android: 17 
